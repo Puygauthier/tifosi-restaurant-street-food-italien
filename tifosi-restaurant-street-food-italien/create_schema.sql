@@ -45,3 +45,48 @@ CREATE TABLE Boisson (
     nom_boisson VARCHAR(100) NOT NULL UNIQUE,
     prix DECIMAL(5,2) NOT NULL CHECK (prix > 0)
 );
+-- Table Client
+CREATE TABLE Client (
+    id_client INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    code_postal INT NOT NULL
+);
+-- Table Menu
+CREATE TABLE Menu (
+    id_menu INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    prix DECIMAL(5,2) NOT NULL CHECK (prix > 0)
+);
+-- Table Achat (Client achète Produit ou Menu)
+CREATE TABLE Achat (
+    id_achat INT AUTO_INCREMENT PRIMARY KEY,
+    id_client INT NOT NULL,
+    id_produit INT DEFAULT NULL,
+    id_menu INT DEFAULT NULL,
+    date_achat DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_client) REFERENCES Client(id_client),
+    FOREIGN KEY (id_produit) REFERENCES Produit(id_produit),
+    FOREIGN KEY (id_menu) REFERENCES Menu(id_menu),
+    CHECK (
+        (id_produit IS NOT NULL AND id_menu IS NULL) OR
+        (id_menu IS NOT NULL AND id_produit IS NULL)
+    )
+);
+-- Table Menu_Focaccia (un menu est constitué de plusieurs focaccias)
+CREATE TABLE Menu_Focaccia (
+    id_menu INT,
+    id_focaccia INT,
+    PRIMARY KEY (id_menu, id_focaccia),
+    FOREIGN KEY (id_menu) REFERENCES Menu(id_menu) ON DELETE CASCADE,
+    FOREIGN KEY (id_focaccia) REFERENCES Focaccia(id_focaccia) ON DELETE CASCADE
+);
+-- Table Menu_Boisson (un menu contient une ou plusieurs boissons)
+CREATE TABLE Menu_Boisson (
+    id_menu INT,
+    id_boisson INT,
+    PRIMARY KEY (id_menu, id_boisson),
+    FOREIGN KEY (id_menu) REFERENCES Menu(id_menu) ON DELETE CASCADE,
+    FOREIGN KEY (id_boisson) REFERENCES Boisson(id_boisson) ON DELETE CASCADE
+);
+
