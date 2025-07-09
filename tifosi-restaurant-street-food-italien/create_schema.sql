@@ -4,13 +4,13 @@ USE tifosi;
 -- Table Marque
 CREATE TABLE Marque (
     id_marque INT AUTO_INCREMENT PRIMARY KEY,
-    nom_marque VARCHAR(100) NOT NULL UNIQUE
+    nom_marque VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Table Produit
 CREATE TABLE Produit (
     id_produit INT AUTO_INCREMENT PRIMARY KEY,
-    nom_produit VARCHAR(100) NOT NULL,
+    nom_produit VARCHAR(50) NOT NULL,
     prix DECIMAL(5,2) NOT NULL CHECK (prix > 0),
     id_marque INT,
     FOREIGN KEY (id_marque) REFERENCES Marque(id_marque)
@@ -19,13 +19,13 @@ CREATE TABLE Produit (
 -- Table Ingredient
 CREATE TABLE Ingredient (
     id_ingredient INT AUTO_INCREMENT PRIMARY KEY,
-    nom_ingredient VARCHAR(100) NOT NULL UNIQUE
+    nom_ingredient VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Table Focaccia
 CREATE TABLE Focaccia (
     id_focaccia INT AUTO_INCREMENT PRIMARY KEY,
-    nom_focaccia VARCHAR(100) NOT NULL UNIQUE,
+    nom_focaccia VARCHAR(50) NOT NULL UNIQUE,
     prix DECIMAL(5,2) NOT NULL CHECK (prix > 0)
 );
 
@@ -42,22 +42,28 @@ CREATE TABLE Focaccia_Ingredient (
 -- Table Boisson
 CREATE TABLE Boisson (
     id_boisson INT AUTO_INCREMENT PRIMARY KEY,
-    nom_boisson VARCHAR(100) NOT NULL UNIQUE,
-    prix DECIMAL(5,2) NOT NULL CHECK (prix > 0)
+    nom_boisson VARCHAR(50) NOT NULL UNIQUE,
+    id_marque INT,
+    FOREIGN KEY (id_marque) REFERENCES Marque(id_marque)
 );
+
 -- Table Client
 CREATE TABLE Client (
     id_client INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
+    nom VARCHAR(50) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
     code_postal INT NOT NULL
 );
--- Table Menu
+
+-- Table Menu (un menu contient exactement une focaccia)
 CREATE TABLE Menu (
     id_menu INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(100) NOT NULL,
-    prix DECIMAL(5,2) NOT NULL CHECK (prix > 0)
+    nom VARCHAR(50) NOT NULL,
+    id_focaccia INT NOT NULL,
+    prix DECIMAL(5,2) NOT NULL CHECK (prix > 0),
+    FOREIGN KEY (id_focaccia) REFERENCES Focaccia(id_focaccia)
 );
+
 -- Table Achat (Client achète Produit ou Menu)
 CREATE TABLE Achat (
     id_achat INT AUTO_INCREMENT PRIMARY KEY,
@@ -73,14 +79,7 @@ CREATE TABLE Achat (
         (id_menu IS NOT NULL AND id_produit IS NULL)
     )
 );
--- Table Menu_Focaccia (un menu est constitué de plusieurs focaccias)
-CREATE TABLE Menu_Focaccia (
-    id_menu INT,
-    id_focaccia INT,
-    PRIMARY KEY (id_menu, id_focaccia),
-    FOREIGN KEY (id_menu) REFERENCES Menu(id_menu) ON DELETE CASCADE,
-    FOREIGN KEY (id_focaccia) REFERENCES Focaccia(id_focaccia) ON DELETE CASCADE
-);
+
 -- Table Menu_Boisson (un menu contient une ou plusieurs boissons)
 CREATE TABLE Menu_Boisson (
     id_menu INT,
@@ -89,4 +88,3 @@ CREATE TABLE Menu_Boisson (
     FOREIGN KEY (id_menu) REFERENCES Menu(id_menu) ON DELETE CASCADE,
     FOREIGN KEY (id_boisson) REFERENCES Boisson(id_boisson) ON DELETE CASCADE
 );
-
