@@ -25,18 +25,23 @@ CREATE TABLE Ingredient (
 -- Table Focaccia
 CREATE TABLE Focaccia (
     id_focaccia INT AUTO_INCREMENT PRIMARY KEY,
-    nom_focaccia VARCHAR(100) NOT NULL,
+    nom_focaccia VARCHAR(100) NOT NULL UNIQUE,
     prix DECIMAL(5,2) NOT NULL CHECK (prix > 0)
 );
 
--- Table Focaccia_Ingredient (Table de jonction entre Focaccia et Ingredient)
+-- Table Focaccia_Ingredient (relation entre Focaccia et Ingredient)
 CREATE TABLE Focaccia_Ingredient (
     id_focaccia INT,
     id_ingredient INT,
     quantite INT NOT NULL CHECK (quantite > 0),
     PRIMARY KEY (id_focaccia, id_ingredient),
-    FOREIGN KEY (id_focaccia) REFERENCES Focaccia(id_focaccia),
-    FOREIGN KEY (id_ingredient) REFERENCES Ingredient(id_ingredient)
+    FOREIGN KEY (id_focaccia) REFERENCES Focaccia(id_focaccia) ON DELETE CASCADE,
+    FOREIGN KEY (id_ingredient) REFERENCES Ingredient(id_ingredient) ON DELETE CASCADE
 );
 
--- Ajouter des contraintes de vérification et garantir les valeurs uniques
+-- Table Boisson
+CREATE TABLE Boisson (
+    id_boisson INT AUTO_INCREMENT PRIMARY KEY,
+    nom_boisson VARCHAR(100) NOT NULL UNIQUE,
+    prix DECIMAL(5,2) NOT NULL CHECK (prix > 0)
+);
